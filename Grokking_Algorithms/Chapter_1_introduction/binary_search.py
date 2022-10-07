@@ -17,5 +17,5 @@ def binary_search(sorted_list, element_for_search):
 
 
 a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-b = binary_search(a, 1)
+b = binary_search(a, 6)
 print(b)
