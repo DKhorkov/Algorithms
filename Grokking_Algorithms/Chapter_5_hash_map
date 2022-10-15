@@ -1,0 +1,1 @@
+Due to the fact, that hash-map is already realized in python as dict, there is no need to write it again.
