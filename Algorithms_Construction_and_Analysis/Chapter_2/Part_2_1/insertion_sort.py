@@ -24,5 +24,5 @@ def insertion_sort(array: List[int]) -> List[int]:
 
 
 if __name__ == '__main__':
-    array: List[int] = [31, 41, 59, 26, 41, 58]  # data from task 2.1
+    array: List[int] = [31, 41, 59, 26, 41, 58]  # data from task Part_2_1.1
     print(insertion_sort(array))

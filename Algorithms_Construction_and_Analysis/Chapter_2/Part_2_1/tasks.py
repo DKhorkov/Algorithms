@@ -3,7 +3,7 @@ from typing import List, Optional
 
 def reversed_insertion_sort(array: List[int]) -> List[int]:
     """
-    Task 2.2 Reverse Insertion Sort
+    Task Part_2_1 Reverse Insertion Sort
     """
 
     comparing_elem_index: int = 1
@@ -29,7 +29,7 @@ def reversed_insertion_sort(array: List[int]) -> List[int]:
 
 def linear_search(array: List[int], search_value: int) -> Optional[int]:
     """
-    Task 2.3. Linear Search.
+    Task Part_2_1.3. Linear Search.
 
     :param array: Array of integers to search value in it.
     :param search_value: Value to search in array.
@@ -44,7 +44,7 @@ def linear_search(array: List[int], search_value: int) -> Optional[int]:
 
 
 if __name__ == '__main__':
-    array: List[int] = [31, 41, 59, 26, 41, 58]  # data from task 2.1
+    array: List[int] = [31, 41, 59, 26, 41, 58]  # data from task Part_2_1.1
     print(reversed_insertion_sort(array))
 
     print(linear_search(array, 22), linear_search(array, 41), sep='\t')
