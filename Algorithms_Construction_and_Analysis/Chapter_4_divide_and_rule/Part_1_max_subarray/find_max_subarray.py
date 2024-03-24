@@ -13,6 +13,11 @@ def find_max_subarray(
         high_index: Optional[int] = None
 ) -> Tuple[int, int, Union[int, float]]:
 
+    """
+    The growth rate of the algorithm is O(log(n)) - due to recursive split; * O(n) - find_max_crossing_subarray
+    cost for each recursion; which is equal to O(n * log(n)).
+    """
+
     # First level of recursive algorithm case:
     if high_index is None:
         high_index = len(array) - 1
