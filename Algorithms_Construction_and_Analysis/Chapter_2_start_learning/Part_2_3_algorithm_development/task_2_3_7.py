@@ -1,12 +1,12 @@
 """
-Describe a O(n * log n)-time algorithm that, given a set S of n integers and another integer x,
+Describe a O(n * log(n))-time algorithm that, given a set S of n integers and another integer x,
 determines whether there exist two elements in S whose sum is exactly x.
 """
 
 from typing import List
 
-from Algorithms_Construction_and_Analysis.Chapter_2.Part_2_3.merge_sort_task_2_3_2 import merge_sort
-from Algorithms_Construction_and_Analysis.Chapter_2.Part_2_3.binary_search_task_2_3_5 import binary_search
+from Algorithms_Construction_and_Analysis.Chapter_2_start_learning.Part_2_3.merge_sort_task_2_3_2 import merge_sort
+from Algorithms_Construction_and_Analysis.Chapter_2_start_learning.Part_2_3.binary_search_task_2_3_5 import binary_search
 
 
 def sum_equal_target(array: List[int], target: int) -> bool:

@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 
-def binary_search(array: List[int], target: int, low_index: int = 0, high_index: int = None) -> Optional[int]:
+def binary_search(array: List[int], target: int, low_index: int = 0, high_index: Optional[int] = None) -> Optional[int]:
     """
     :param array: Sorted array with values.
     :param target: Target to find in sorted array.

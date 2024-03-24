@@ -6,7 +6,7 @@ def merge_sort(array: List[int]) -> List[int]:
         return array
 
     mid = len(array) // 2
-    left = merge_sort(array[:mid])
+    left = merge_sort(array[: mid])
     right = merge_sort(array[mid:])
     sorted_array = merge(left, right)
     return sorted_array
