@@ -10,7 +10,7 @@ def binary_search(array: List[int], target: int, low_index: int = 0, high_index:
     :return:
     """
 
-    if not high_index:
+    if high_index is None:  # if not high_index when high_index == 0 will pass condition
         high_index = len(array) - 1
 
     if low_index > high_index:
