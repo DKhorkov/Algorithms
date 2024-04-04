@@ -4,9 +4,9 @@ from typing import List
 class HeapSort:
 
     def __init__(self, arr: List[int]) -> None:
-        self._arr = arr
-        self._length = len(self._arr)
-        self._heap_size = self._length
+        self._arr: List[int] = arr
+        self._length: int = len(self._arr)
+        self._heap_size: int = self._length
 
     def sort(self) -> List[int]:
         """
@@ -50,11 +50,15 @@ class HeapSort:
         Согласно второму закону основного метода решения рекуррентных уравнений, скорость алгоритма будет равна O(log(n)).
         """
 
-        largest = index
+        largest: int = index
 
         # Согласно правилу:
-        left = 2 * index
-        right = 2 * index + 1
+        if index == 0:
+            left = 1  # left = 2 * i, но по псевдокоду минимальный индекс = 1
+        else:
+            left: int = 2 * index
+
+        right: int = left + 1
 
         """
         Если индекс меньше размера пирамиды (то есть является листом или узлом), а также его значение больше 

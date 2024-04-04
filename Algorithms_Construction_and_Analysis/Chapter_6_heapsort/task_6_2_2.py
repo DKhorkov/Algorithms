@@ -20,9 +20,14 @@ class ReversedHeapSort(HeapSort):
         Время выполнения полностью равно стандартной пирамидальной сортировке  = O(n * log(n)).
         """
 
-        smallest = index
-        left = 2 * index
-        right = 2 * index + 1
+        smallest: int = index
+
+        if index == 0:
+            left = 1  # left = 2 * i, но по псевдокоду минимальный индекс = 1
+        else:
+            left: int = 2 * index
+
+        right: int = left + 1
 
         # Сравнение меняется местами: self._arr[left] < self._arr[smallest] VS self._arr[largest] < self._arr[left]
         if left < self._heap_size and self._arr[left] < self._arr[smallest]:
