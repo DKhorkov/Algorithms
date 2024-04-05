@@ -74,10 +74,8 @@ class HeapPriorityQueue:
         self.change_priority(index=self._heap_size - 1, priority=task.priority)
 
     def change_priority(self, index: int, priority: int) -> None:
-        if index < 0 or index >= self._heap_size:
-            raise IndexError(f'There is no task with index={index} in queue.')
-        elif priority < 0:
-            raise ValueError(f'Priority can not be less than zero.')
+        self._check_index(index=index)
+        self._check_priority(priority=priority)
 
         if priority >= self._tasks[index].priority:
             self._increase_priority(index=index, priority=priority)
@@ -93,6 +91,13 @@ class HeapPriorityQueue:
             index = self._get_parent(index)
 
     def _decrease_priority(self, index: int, priority: int) -> None:
+        """
+        Является реализацией задачи 6.5.3.
+
+        Write pseudocode for the procedures HEAP-MINIMUM, HEAP-EXTRACT-MIN,
+        HEAP-DECREASE-KEY, and MIN-HEAP-INSERT that implement a min-priority queue with a min-heap.
+        """
+
         self._tasks[index].priority = priority
 
         while (index < self._heap_size and
@@ -102,6 +107,28 @@ class HeapPriorityQueue:
 
             self._swap(first_index=self._get_left_child(index), second_index=index)
             index = self._get_left_child(index)
+
+    def delete(self, index: int) -> None:
+        """
+        Является реализацией задачи 6.5.8.
+
+        The operation HEAP-DELETE(A,i) deletes the item in node i from heap A.
+        Give an implementation of HEAP-DELETE that runs in O(log(n)) time for an n-element max-heap.
+        """
+
+        self._check_index(index=index)
+        self._tasks.pop(index)
+        self._heap_size -= 1
+        self._heapify(0)
+
+    def _check_index(self, index: int) -> None:
+        if index < 0 or index >= self._heap_size:
+            raise IndexError(f'There is no task with index={index} in queue.')
+
+    @staticmethod
+    def _check_priority(priority: int) -> None:
+        if priority < 0:
+            raise ValueError(f'Priority can not be less than zero.')
 
     @staticmethod
     def _get_parent(index: int) -> int:
@@ -164,3 +191,18 @@ if __name__ == '__main__':
     heap_priority_queue.change_priority(index=0, priority=1)
     for task in heap_priority_queue:
         print(task)
+
+    print('\n')
+
+    heap_priority_queue.add(task1)
+    heap_priority_queue.add(task2)
+    heap_priority_queue.add(task3)
+    heap_priority_queue.add(task4)
+    heap_priority_queue.add(task5)
+    heap_priority_queue.add(task6)
+    heap_priority_queue.delete(1)
+    heap_priority_queue.delete(3)
+    for task in heap_priority_queue:
+        print(task)
+
+    print('\n')
