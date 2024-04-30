@@ -2,6 +2,9 @@
 Красно-черные деревья похожи на бинарные деревья поиска, одна их узлы имеют еще и цвета, а также у них есть
 пять свойств, за счет которых гарантируется выполнение операций за асимптоматические O(log(n)) в наихудшем случае.
 
+Суть красно-черных деревьев в создании приблизительно сбалансированного дерева, чтобы его левая и правая ветви
+имели приблизительно равную глубину (свойство №4).
+
 Свойства красно-черного дерева:
 1) Каждый узел окрашен либо в красный, либо в черный цвет (в структуре данных узла появляется
 дополнительное поле – бит цвета);
@@ -15,6 +18,8 @@
 from typing import Any, Optional
 from dataclasses import dataclass
 
+from Algorithms_Construction_and_Analysis.Chapter_12_binary_search_tree.binary_search_tree import BinarySearchTree
+
 
 @dataclass(frozen=True)
 class Colors:
@@ -24,10 +29,10 @@ class Colors:
 
 class Node:
 
-    def __init__(self, color: Colors = Colors.BLACK, key: int = 0, value: Any = None, nil_node: bool = False) -> None:
+    def __init__(self, color: str = Colors.BLACK, key: int = 0, value: Any = None, nil_node: bool = False) -> None:
         self.parent: Optional[Node] = None
         self.left: Optional[Node] = None
-        self.color: Colors = color
+        self.color: str = color
         self.key: int = key
         self.value: Any = value
         self.right: Optional[Node] = None
@@ -37,10 +42,11 @@ class Node:
         return self._nil_node
 
 
-class RedBlackTree:
+class RedBlackTree(BinarySearchTree):
 
     def __init__(self) -> None:
-        self.root: Node = Node()
+        self._nil_node: Node = Node(nil_node=True)
+        super().__init__(root=self._nil_node)
 
     def _left_rotate(self, node: Node) -> None:
         """
@@ -108,3 +114,113 @@ class RedBlackTree:
         # Размещение y в качестве правого дочернего узла x:
         x.right = node
         node.parent = x
+
+    def insert(self, key: int, value: Any = None) -> None:
+        """
+        Метод в большей части повторяем метод вставки из бинарного дерева поиска, но с учетом того, что теперь
+        корень всегда существует,но может быть NilNode.
+
+        Также в конце метода применяется self._insert_fixup() для нормализации структуры красно-черного дерева, в
+        соответствии с которой должны сохраняться все свойства красно-черного дерева.
+
+        Цвет нового узла всегда красный, поскольку черный цвет нарушает свойство №5 красно-черного
+        дерева.
+        """
+
+        new_node: Node = Node(key=key, value=value, color=Colors.RED)
+        parent: Node = self._nil_node
+        temp: Node = self.root
+        while not temp.is_nil_node():
+            parent = temp
+            if new_node.key < temp.key:
+                temp = temp.left
+            else:
+                temp = temp.right
+
+        new_node.parent = parent
+
+        if parent.is_nil_node():
+            self.root = new_node
+        elif new_node.key < parent.key:
+            parent.left = new_node
+        else:
+            parent.right = new_node
+
+        # Сохранение свойства №3 красно-черного дерева:
+        new_node.left = self._nil_node
+        new_node.right = self._nil_node
+
+        # Нормализации структуры красно-черного дерева:
+        self._insert_fixup(node=new_node)
+
+    def _insert_fixup(self, node: Node) -> None:
+        """
+        Данный метод занимается исключительно поддержанием свойств красно-черного дерева после добавление в дерево
+        нового узла. После выполнения метода self.insert() могут быть нарушены только свойства №2 и №4.
+
+        Всего существует три случая в ходе исправления нарушения свойства №4:
+        1) Дядя (y) нового узла (z) является красным (как и z);
+        2) Дядя (y) нового узла (z) является черным (а z красным), а также z является правым дочерним
+        узлом своего отца (x);
+        3) Дядя (y) нового узла (z) является черным (а z красным), а также z является левым дочерним
+        узлом своего отца (x);
+        """
+
+        parent: Node = node.parent
+        while parent.color == Colors.RED:  # Если цвет родителя черный, то свойство №4 не нарушается.
+            grandfather: Node = parent.parent
+            if parent == grandfather.left:
+                uncle: Node = grandfather.right
+
+                # Первый случай:
+                if uncle.color == Colors.RED:
+                    # Меняем цвета на противоположные для трех узлов:
+                    parent.color = Colors.BLACK
+                    uncle.color = Colors.BLACK
+                    grandfather.color = Colors.RED
+
+                    # Теперь не обходимо работать с дедом в следующей итерации с сохранением инварианта:
+                    node = grandfather
+                    parent = node.parent
+                else:
+                    # Второй случай, который приводится к третьему случаю:
+                    if node == parent.right:
+                        node = parent
+                        self._left_rotate(node=node)
+
+                    """
+                    Третий случай. Меняем цвета на противоположные для всех, кроме дяди (уже черный), 
+                    чтобы не нарушать свойство №4.
+                    """
+                    parent.color = Colors.BLACK
+                    grandfather.color = Colors.RED
+                    self._right_rotate(node=grandfather)
+            else:
+                uncle: Node = grandfather.left
+
+                # Первый случай:
+                if uncle.color == Colors.RED:
+                    # Меняем цвета на противоположные для трех узлов:
+                    parent.color = Colors.BLACK
+                    uncle.color = Colors.BLACK
+                    grandfather.color = Colors.RED
+
+                    # Теперь не обходимо работать с дедом в следующей итерации с сохранением инварианта:
+                    node = grandfather
+                    parent = node.parent
+                else:
+                    # Второй случай, который приводится к третьему случаю:
+                    if node == parent.left:
+                        node = parent
+                        self._right_rotate(node=node)
+
+                    """
+                    Третий случай. Меняем цвета на противоположные для всех, кроме дяди (уже черный), 
+                    чтобы не нарушать свойство №4.
+                    """
+                    parent.color = Colors.BLACK
+                    grandfather.color = Colors.RED
+                    self._left_rotate(node=grandfather)
+
+        # Восстановление свойства №2 красно-черного дерева:
+        self.root.color = Colors.BLACK
