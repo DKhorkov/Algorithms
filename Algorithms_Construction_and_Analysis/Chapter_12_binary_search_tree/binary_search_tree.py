@@ -245,7 +245,7 @@ class BinarySearchTree:
             """
             self._transplant(to_delete=node_to_delete, to_transplant=node_to_transplant)
             node_to_transplant.left = node_to_delete.left
-            node_to_delete.left.parent = node_to_transplant
+            node_to_transplant.left.parent = node_to_transplant
 
     def _transplant(self, to_delete: Node, to_transplant: Optional[Node]) -> None:
         """

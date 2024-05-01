@@ -15,7 +15,7 @@
 5) Пути от узла к его листьям должны содержать одинаковое количество черных узлов(это черная высота).
 """
 
-from typing import Any, Optional
+from typing import Any, Optional, List
 from dataclasses import dataclass
 
 from Algorithms_Construction_and_Analysis.Chapter_12_binary_search_tree.binary_search_tree import BinarySearchTree
@@ -38,6 +38,9 @@ class Node:
         self.right: Optional[Node] = None
         self._nil_node: bool = nil_node
 
+    def __repr__(self) -> str:
+        return f"Node(key={self.key}, value={self.value})"
+
     def is_nil_node(self) -> bool:
         return self._nil_node
 
@@ -47,6 +50,20 @@ class RedBlackTree(BinarySearchTree):
     def __init__(self) -> None:
         self._nil_node: Node = Node(nil_node=True)
         super().__init__(root=self._nil_node)
+
+    def traverse(self, node: Node = 'root') -> List[Node]:
+        """
+        Обходим дерево так, чтобы список узлов вернулся в отсортированном по ключам порядке,
+        что происходит за счет концепции бинарного дерева поиска.
+        """
+
+        if node == 'root':
+            node: Optional[Node] = self.root
+
+        if not node.is_nil_node():
+            return self.traverse(node=node.left) + [node] + self.traverse(node=node.right)
+
+        return []
 
     def _left_rotate(self, node: Node) -> None:
         """
@@ -163,7 +180,7 @@ class RedBlackTree(BinarySearchTree):
         2) Дядя (y) нового узла (z) является черным (а z красным), а также z является правым дочерним
         узлом своего отца (x);
         3) Дядя (y) нового узла (z) является черным (а z красным), а также z является левым дочерним
-        узлом своего отца (x);
+        узлом своего отца (x).
         """
 
         parent: Node = node.parent
@@ -224,3 +241,150 @@ class RedBlackTree(BinarySearchTree):
 
         # Восстановление свойства №2 красно-черного дерева:
         self.root.color = Colors.BLACK
+
+    def delete(self, key: int) -> None:
+        """
+        Метод в большей части повторяем метод удаления из бинарного дерева поиска, но с учетом того, что теперь
+        родитель всегда существует,но может быть NilNode, а также с учетом цвета удаляемого узла.
+
+        Так, чтобы восстановить потенциально нарушенные свойства красно-черного дерева, в конце метода вызывается
+        self._delete_fixup().
+        """
+
+        node_to_delete: Node = self.search(key=key)
+        original_color: str = node_to_delete.color
+
+        if node_to_delete.left.is_nil_node():
+            temp_node: Node = node_to_delete.right
+            self._transplant(to_delete=node_to_delete, to_transplant=node_to_delete.right)
+        elif node_to_delete.right.is_nil_node():
+            temp_node: Node = node_to_delete.left
+            self._transplant(to_delete=node_to_delete, to_transplant=node_to_delete.left)
+        else:
+            node_to_transplant = self.find_min(node=node_to_delete.right)
+            original_color = node_to_transplant.color
+            temp_node: Node = node_to_transplant.right
+
+            if node_to_delete == node_to_transplant.parent:
+                temp_node.parent = node_to_transplant
+            else:
+                self._transplant(to_delete=node_to_transplant, to_transplant=node_to_transplant.right)
+                node_to_transplant.right = node_to_delete.right
+                node_to_transplant.right.parent = node_to_transplant
+
+            self._transplant(to_delete=node_to_delete, to_transplant=node_to_transplant)
+            node_to_transplant.left = node_to_delete.left
+            node_to_transplant.left.parent = node_to_transplant
+            node_to_transplant.color = node_to_delete.color
+
+        # Только удаление узла черного цвета могло нарушить свойств красно-черного дерева:
+        if original_color == Colors.BLACK:
+            self._delete_fixup(node=temp_node)
+
+    def _delete_fixup(self, node: Node) -> None:
+        """
+        Данный метод занимается исключительно поддержанием свойств красно-черного дерева после удаления из дерева
+        узла.
+
+        Всего существует четыре случая в ходе исправления нарушения свойств:
+        1) Брат (w) удаляемого узла (z) является красным;
+        2) Брат (w) удаляемого узла (z) является черным, а также оба его дочерних узла являются черными;
+        3) Брат (w) удаляемого узла (z) является черным, его левый дочерний узел является красным, а правый черным;
+        4) Брат (w) удаляемого узла (z) является черным, а его правый дочерний узел является красным.
+        """
+
+        # Если удаляется красный узел, то никакие свойства не нарушаются:
+        while node != self.root and node.color == Colors.BLACK:
+            if node == node.parent.left:
+                brother: Node = node.parent.right
+
+                # Первый случай, который преобразуется во второй, третий или четвертый случай и обрабатывается далее:
+                if brother.color == Colors.RED:
+                    brother.color = Colors.BLACK
+                    node.parent.color = Colors.RED
+                    self._left_rotate(node=node.parent)
+                    brother = node.parent.right
+
+                # Второй случай:
+                if brother.left.color == Colors.BLACK and brother.right.color == Colors.BLACK:
+                    brother.color = Colors.RED
+                    node = node.parent
+                else:
+                    # Третий случай, который преобразуется в четвертый:
+                    if brother.right.color == Colors.BLACK:
+                        brother.left.color = Colors.BLACK
+                        brother.color = Colors.RED
+                        self._right_rotate(node=brother)
+                        brother = node.parent.right
+
+                    # Четвертый случай:
+                    brother.color = node.parent.color
+                    node.parent.color = Colors.BLACK
+                    brother.right.color = Colors.BLACK
+                    self._left_rotate(node=node.parent)
+                    node = self.root
+            else:
+                brother: Node = node.parent.left
+
+                # Первый случай, который преобразуется во второй, третий или четвертый случай и обрабатывается далее:
+                if brother.color == Colors.RED:
+                    brother.color = Colors.BLACK
+                    node.parent.color = Colors.RED
+                    self._right_rotate(node=node.parent)
+                    brother = node.parent.left
+
+                # Второй случай:
+                if brother.right.color == Colors.BLACK and brother.left.color == Colors.BLACK:
+                    brother.color = Colors.RED
+                    node = node.parent
+                else:
+                    # Третий случай, который преобразуется в четвертый:
+                    if brother.left.color == Colors.BLACK:
+                        brother.right.color = Colors.BLACK
+                        brother.color = Colors.RED
+                        self._left_rotate(node=brother)
+                        brother = node.parent.left
+
+                    # Четвертый случай:
+                    brother.color = node.parent.color
+                    node.parent.color = Colors.BLACK
+                    brother.left.color = Colors.BLACK
+                    self._right_rotate(node=node.parent)
+                    node = self.root
+
+        node.color = Colors.BLACK
+
+    def _transplant(self, to_delete: Node, to_transplant: Node) -> None:
+        """
+        Метод в большей части повторяем метод пересадки из бинарного дерева поиска, но с учетом того, что теперь
+        родитель всегда существует,но может быть NilNode.
+
+        Также в конце метода производится безусловное переопределение родителя узлу для пересадки,
+        потому что он всегда существует, хоть и может быть NilNode.
+        """
+
+        if to_delete.parent.is_nil_node():
+            self.root = to_transplant
+        elif to_delete == to_delete.parent.left:
+            to_delete.parent.left = to_transplant
+        else:
+            to_delete.parent.right = to_transplant
+
+        to_transplant.parent = to_delete.parent
+
+
+if __name__ == '__main__':
+    tree: RedBlackTree = RedBlackTree()
+    tree.insert(key=1)
+    tree.insert(key=5)
+    tree.insert(key=2)
+    tree.insert(key=3)
+    tree.insert(key=6)
+    tree.insert(key=4)
+    tree.insert(key=7)
+    print(tree.traverse())
+    print(tree.search(key=1))
+    tree.delete(key=6)
+    print(tree.traverse())
+
+
