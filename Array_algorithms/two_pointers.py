@@ -23,11 +23,15 @@ class TwoPointersSort:
         num_to_swap_index: int = 0
         other_num_index: int = 0
         for _ in range(len(self._arr) - 1):
+            flag: bool = False
             if self._arr[num_to_swap_index] != self._num:
                 num_to_swap_index += 1
+                other_num_index += 1
+                flag = True
 
             if self._arr[other_num_index] == self._num:
-                other_num_index += 1
+                if not flag:
+                    other_num_index += 1
 
             self._swap(first_index=num_to_swap_index, second_index=other_num_index)
 
@@ -38,6 +42,6 @@ class TwoPointersSort:
 
 
 if __name__ == '__main__':
-    array: List[int] = [0, 3, 0, 1, 12]
-    sorted_array: List[int] = TwoPointersSort(array, 0).sort()
+    array: List[int] = [0,1,2,2,3,0,4,2]
+    sorted_array: List[int] = TwoPointersSort(array, 2).sort()
     print(sorted_array)
