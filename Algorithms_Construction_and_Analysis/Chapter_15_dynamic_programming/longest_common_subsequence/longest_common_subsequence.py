@@ -110,8 +110,8 @@ class LongestCommonSubsequenceEstimator:
 
 
 if __name__ == '__main__':
-    first_sequence = 'abcbdab'
-    second_sequence = 'bdcaba'
+    first_sequence = 'sbgtfrt'
+    second_sequence = 'qsotlr'
     lcs_estimator: LongestCommonSubsequenceEstimator = LongestCommonSubsequenceEstimator(first_sequence, second_sequence)
     lcs: str = lcs_estimator.estimate_lcs()
     print(lcs)
