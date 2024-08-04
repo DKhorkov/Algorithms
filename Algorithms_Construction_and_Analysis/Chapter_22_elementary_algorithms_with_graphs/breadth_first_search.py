@@ -10,33 +10,17 @@
 *    *    *
 * *           *
 1 * * * 7 * * * 6
+
+Асимптоматическая скорость алгоритма составляет O(V + E), где V - количество вершин графа, а E - количество ребер.
 """
 
 
 from __future__ import annotations
 from copy import deepcopy
-from typing import List, Protocol, Any, Optional
-from enum import Enum
+from typing import List, Optional
 from queue import Queue
 
-
-class GraphNodeColors(str, Enum):
-    """
-    Цвета узлов графа не являются обязательными, однако используются для упрощения понимания.
-    """
-
-    WHITE = 'white'  # Узел графа не открыт
-    GREY = 'grey'  # Узел графа открыт, но не исследован
-    BLACK = 'black'  # Узел графа исследован
-
-
-class Prototype(Protocol):
-    """
-    Используем паттерн Прототип, чтобы не изменять полученные графы, а работать с их копиями.
-    """
-
-    def clone(self) -> Any:
-        raise NotImplementedError
+from Algorithms_Construction_and_Analysis.Chapter_22_elementary_algorithms_with_graphs.colors import GraphNodeColors
 
 
 class GraphNode:
@@ -66,8 +50,8 @@ class BreadthFirstSearch:
         self._queue: Queue = Queue()
 
     def breadth_first_search(self, graph: GraphNode, node_to: GraphNode) -> None:
-        self._root: GraphNode = graph.clone()
-        self._node_to: GraphNode = node_to.clone()
+        self._root = graph.clone()
+        self._node_to = node_to.clone()
         self._build_bfs_tree()
         self._print_path()
 
@@ -104,7 +88,7 @@ class BreadthFirstSearch:
         """
         Метод рекурсивно отрисовывает в консоль путь до искомого узла, если такой путь существует.
 
-        :param node_to:
+        :param node_to: Узел, к которому мы хотим найти путь.
         """
 
         # По дефолту - начинаем с искомого узла:
@@ -137,13 +121,13 @@ if __name__ == '__main__':
     seven: GraphNode = GraphNode(7)
 
     # Building our graph:
-    four.neighbors = [one, two]
     one.neighbors = [four, two, seven]
     two.neighbors = [four, one, five, six]
-    five.neighbors = [two, three]
     three.neighbors = [five]
-    seven.neighbors = [one, six]
+    four.neighbors = [one, two]
+    five.neighbors = [two, three]
     six.neighbors = [seven, two]
+    seven.neighbors = [one, six]
 
     bfs: BreadthFirstSearch = BreadthFirstSearch()
     bfs.breadth_first_search(graph=four, node_to=three)
