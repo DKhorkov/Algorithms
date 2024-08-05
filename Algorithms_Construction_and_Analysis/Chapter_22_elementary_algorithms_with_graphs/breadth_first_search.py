@@ -17,7 +17,7 @@
 
 from __future__ import annotations
 from copy import deepcopy
-from typing import List, Optional
+from typing import List, Optional, Any
 from queue import Queue
 
 from Algorithms_Construction_and_Analysis.Chapter_22_elementary_algorithms_with_graphs.colors import GraphNodeColors
@@ -25,8 +25,8 @@ from Algorithms_Construction_and_Analysis.Chapter_22_elementary_algorithms_with_
 
 class GraphNode:
 
-    def __init__(self, value: int) -> None:
-        self.value: int = value
+    def __init__(self, value: Any) -> None:
+        self.value: Any = value
         self.distance_from_root: int = 0
         self.parent: Optional[GraphNode] = None
         self.neighbors: List[GraphNode] = []
