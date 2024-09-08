@@ -38,7 +38,13 @@ from Algorithms_Construction_and_Analysis.Chapter_24_shortest_paths_from_one_ver
 
 class BellmanFordAlgorithm(ShortestPathsFromOneVertexBaseAlgorithm):
 
-    def check_negative_weight_cycle_existence(self, roots: List[GraphNode], source_node: GraphNode) -> bool:
+    def process_graph(self, roots: List[GraphNode], source_node: GraphNode) -> bool:
+        """
+        Обрабатывает граф для поиска кратчайших путей ко всем узлам от исходного узла.
+        Также проверяет существование цикла отрицательным весом. Если такой цикл существует,
+        возвращает True, в противном случае возвращает False.
+        """
+
         self._roots = roots
         self._source_node = source_node
 
@@ -66,32 +72,32 @@ if __name__ == '__main__':
 
     # Create edges:
     s.edges = [
-        GraphEdge(node_to=t, node_from=s, cost=6),
-        GraphEdge(node_to=y, node_from=s, cost=7),
+        GraphEdge(node_from=s, node_to=t, cost=6),
+        GraphEdge(node_from=s, node_to=y, cost=7),
     ]
 
     t.edges = [
-        GraphEdge(node_to=z, node_from=t, cost=-4),
-        GraphEdge(node_to=x, node_from=t, cost=5),
-        GraphEdge(node_to=y, node_from=t, cost=8),
+        GraphEdge(node_from=t, node_to=z, cost=-4),
+        GraphEdge(node_from=t, node_to=x, cost=5),
+        GraphEdge(node_from=t, node_to=y, cost=8),
     ]
 
     y.edges = [
-        GraphEdge(node_to=z, node_from=y, cost=9),
-        GraphEdge(node_to=x, node_from=y, cost=-3),
+        GraphEdge(node_from=y, node_to=z, cost=9),
+        GraphEdge(node_from=y, node_to=x, cost=-3),
     ]
 
     x.edges = [
-        GraphEdge(node_to=t, node_from=x, cost=-2),
+        GraphEdge(node_from=x, node_to=t, cost=-2),
     ]
 
     z.edges = [
-        GraphEdge(node_to=x, node_from=z, cost=7),
-        GraphEdge(node_to=s, node_from=z, cost=2),
+        GraphEdge(node_from=z, node_to=x, cost=7),
+        GraphEdge(node_from=z, node_to=s, cost=2),
     ]
 
     bellman_ford_algorithm: BellmanFordAlgorithm = BellmanFordAlgorithm()
-    circle: bool = bellman_ford_algorithm.check_negative_weight_cycle_existence(
+    circle: bool = bellman_ford_algorithm.process_graph(
         source_node=s,
         roots=[s, t, y, x, z]
     )
@@ -99,5 +105,6 @@ if __name__ == '__main__':
     if not circle:
         bellman_ford_algorithm.print_shortest_path(node_to=x)
         bellman_ford_algorithm.print_shortest_path(node_to=t)
+        bellman_ford_algorithm.print_shortest_path(node_to=z)
     else:
-        print(f'There is no shortest path from one source node to {x}')
+        print(f'There is no shortest path source node to any other node due to negative weighted cycle')

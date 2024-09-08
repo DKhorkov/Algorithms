@@ -49,17 +49,15 @@ class TopologicalGraphNode(GraphNode):
 class TopologicalSort:
 
     def __init__(self) -> None:
-        self._sorted: List[TopologicalGraphNode] = []
+        self._sorted_nodes: List[TopologicalGraphNode] = []
         self._roots: List[TopologicalGraphNode] = []
         self._time: int = 0
-        self._node_found: bool = False
 
     def sort(self, roots: List[TopologicalGraphNode]) -> None:
         self._time = 0  # Сбрасываем временные метки для каждого нового поиска
         self._roots = roots  # Не клонируем узлы, иначе один узел будет обработан несколько раз
 
         self._depth_first_search()
-        self._print_path()
 
     def _depth_first_search(self) -> None:
         # Строим деревья поиска в глубину для всех вершин графа:
@@ -85,17 +83,21 @@ class TopologicalSort:
         self._time += 1
         node.explored_time = self._time
         node.color = GraphNodeColors.BLACK
-        self._sorted.insert(0, node)
+        self._sorted_nodes.insert(0, node)
 
-    def _print_path(self) -> None:
+    def print_path(self) -> None:
         """
         Метод рекурсивно отрисовывает в консоль путь до искомого узла, если такой путь существует.
 
         :param node_to: Узел, к которому мы хотим найти путь.
         """
 
-        for node in self._sorted:
+        for node in self._sorted_nodes:
             print(node)
+
+    @property
+    def sorted_nodes(self) -> List[TopologicalGraphNode]:
+        return self._sorted_nodes
 
 
 if __name__ == '__main__':
@@ -121,3 +123,4 @@ if __name__ == '__main__':
     topological_sort: TopologicalSort = TopologicalSort()
     # topological_sort.sort(roots=[shirt, watch, underpants, socks])
     topological_sort.sort(roots=[watch, socks, underpants, shirt])
+    topological_sort.print_path()
