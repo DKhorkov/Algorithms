@@ -1,13 +1,13 @@
-from typing import List, AnyStr, Optional, Self
+from typing import List, Any, Optional, Self
 from dataclasses import dataclass
 
 
 @dataclass
 class QueueTask:
     priority: int
-    task: AnyStr
+    task: Any
 
-    def __str__(self) -> AnyStr:
+    def __str__(self) -> Any:
         return f'Task with priority={self.priority} and value={self.task}'
 
 
@@ -61,6 +61,7 @@ class HeapPriorityQueue:
         4) Удаляем последнюю, поскольку она теперь дублируется.
         5) Сортируетм пирамиду так, чтобы она отвечала требованиям невозрастающей пирамиды.
         """
+
         task: QueueTask = self._tasks[0]
         self._heap_size -= 1
         self._tasks[0] = self._tasks[self._heap_size]
@@ -144,6 +145,9 @@ class HeapPriorityQueue:
             return 1
 
         return index * 2 + 1
+
+    def is_empty(self) -> bool:
+        return self._heap_size == 0
 
     @property
     def tasks(self) -> List[QueueTask]:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Union
 
 
 class GraphEdge:
@@ -22,7 +22,7 @@ class GraphNode:
 
     def __init__(self, value: Any) -> None:
         self.parent: Optional[GraphNode] = None
-        self.shortest_path_estimate: float = math.inf  # Нет пути к узлу из исходного узла
+        self.shortest_path_estimate: Union[int, float] = math.inf  # Нет пути к узлу из исходного узла
         self.value: Any = value
         self.edges: List[GraphEdge] = []
         self.path_from_source: List[GraphEdge] = []
