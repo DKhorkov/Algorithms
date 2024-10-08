@@ -25,13 +25,13 @@ class RadixSort:
         self._k: int = 10  # Десятичная система счисления
 
     def sort(self) -> List[int]:
-        # Совершаем устойчиую сортировку для каждого разряда на основе максимального числа во входном массиве
+        # Совершаем устойчивую сортировку для каждого разряда на основе максимального числа во входном массиве
         for i in range(self._max_digits):
-            self._counting_sort(power=i)
+            self._radix_sort(power=i)
 
         return self._arr
 
-    def _counting_sort(self, power: int) -> None:
+    def _radix_sort(self, power: int) -> None:
         # Модернизируем временный массив для целей поразрядной сортировки
         temp_arr: List[List[int]] = [[] for _ in range(self._k)]
 

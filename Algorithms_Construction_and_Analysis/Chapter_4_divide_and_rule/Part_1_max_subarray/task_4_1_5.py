@@ -19,7 +19,7 @@ def max_subarray_linear(array: List[int]) -> Tuple[int, int, Union[int, float]]:
 
     current_sum: float = -inf
     current_low_index: int = 0
-    current_high_index: int = 0
+    current_high_index: int
 
     """
     Итерируемся по массиву: Для каждого индекса будем считать, что он является верхним, чтобы наш подмассив мог 
@@ -54,6 +54,7 @@ def max_subarray_linear(array: List[int]) -> Tuple[int, int, Union[int, float]]:
 
 if __name__ == '__main__':
     array: List[int] = [13, -3, -25, 20, -3, -16, -23, 18, 20, -7, 12, -5, -22, 15, -4, 7]
+    # array: List[int] = [-3, -25, -1]
     left_index, right_index, max_sum = max_subarray_linear(array=array)
     max_subarray: List[int] = array[left_index: right_index + 1]
     print(array, max_subarray, max_sum, sep='\t-\t')
